@@ -134,6 +134,14 @@ def ask_api(request):
                 f"  Description: {diet.description}\n"
                 f"  Image: {image_url}\n"
             )
+        diet_data = request.data.get('diet')
+        if not diet_data:
+            return Response({"error": "Diet data is required."}, status=400)
+        
+        name = diet_data.get("name", "")
+        description = diet_data.get("description", "")
+        image_url = request.build_absolute_uri(diet_data.get("image", ""))
+
 
         # Construct the prompt
         prompt = (
@@ -145,13 +153,13 @@ def ask_api(request):
             "    - 'title': name of the recipe\n"
             "    - 'instructions': preparation steps\n"
             "    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
+
             f"Diets:\n{diet_descriptions}\n"
             "Respond ONLY with a raw JSON array. Do not include any headings, explanations, or markdown."
-        )
 
-              # Ensure the prompt is not empty
-        if not diet_descriptions.strip():
-            return Response({"error": "No diets available to generate the prompt."}, status=400)
+            "Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown. Have at least 5 recipes.\n"
+
+        )
 
         # Generate content using the model
         model = genai.GenerativeModel("gemini-2.0-flash")

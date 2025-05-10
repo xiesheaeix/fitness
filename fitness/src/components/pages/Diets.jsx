@@ -4,7 +4,7 @@ import DietComp from "../dietComp/DietComp";
 
 const Diets = () => {
   return (
-    <main>
+    <main className="diets-page">
       <DietComp />
     </main>
   );

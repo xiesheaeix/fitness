@@ -174,7 +174,7 @@ const CalorieCalculatedComponent = ({ caloriePerDayAmount }) => {
         Based on your data, the optimal number of calories per day is:{" "}
       </p>
       <div className="calorie-result__amount">
-        <span>{caloriePerDayAmount}</span> Ccals
+        <span>{caloriePerDayAmount}</span> Kcals
       </div>
     </div>
   );
