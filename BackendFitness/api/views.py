@@ -99,23 +99,14 @@ class PasswordResetConfirmView(APIView):
 @api_view(['POST', 'GET'])  # Changed to POST since you're using request.data
 def ask_api(request):
     try:
-        diet_name = request.data.get('diet_name')
-        if not diet_name:
-            return Response({"error": "Diet name is required."}, status=400)
+        diet_data = request.data.get('diet')
+        if not diet_data:
+            return Response({"error": "Diet data is required."}, status=400)
         
-        diet = Diet.objects.filter(name=diet_name).first()
-        if not diet:
-            return Response({"error": "Diet not found."}, status=404)
-        
-        # Initialize diet_descriptions
-        diet_descriptions = ""
-        
-        image_url = request.build_absolute_uri(diet.image.url) if diet.image else "No image"
-        diet_descriptions += (
-            f"\n- Name: {diet.name}\n"
-            f"  Description: {diet.description}\n"
-            f"  Image: {image_url}\n"
-        )
+        name = diet_data.get("name", "")
+        description = diet_data.get("description", "")
+        image_url = request.build_absolute_uri(diet_data.get("image", ""))
+
 
         # Construct the prompt
         prompt = (
@@ -127,13 +118,8 @@ def ask_api(request):
             "    - 'title': name of the recipe\n"
             "    - 'instructions': preparation steps\n"
             "    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
-            f"Diet:\n{diet_descriptions}\n"
-            "Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown."
+            "Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown. Have at least 5 recipes.\n"
         )
-
-              # Ensure the prompt is not empty
-        if not diet_descriptions.strip():
-            return Response({"error": "No diets available to generate the prompt."}, status=400)
 
         # Generate content using the model
         model = genai.GenerativeModel("gemini-2.0-flash")
