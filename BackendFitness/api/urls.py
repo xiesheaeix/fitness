@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views 
 from django.urls import path
 
+from .views import hello_world,  diet_list, ask_api , profile
 
 urlpatterns = [
     path('hello/', hello_world),
@@ -19,7 +20,7 @@ urlpatterns = [
     path('password-reset/', PasswordResetRequestView.as_view(), name='password_reset'),
     path('reset-password/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
 
-
-
+    path('ask_api/', ask_api), 
+    path('profile/', profile),
 ]
 

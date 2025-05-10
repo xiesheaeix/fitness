@@ -8,13 +8,14 @@ class Profile(models.Model):
  age = models.IntegerField(null=True, blank=True)
  height = models.FloatField(null=True, blank=True)
  weight = models.FloatField(null=True, blank=True)
+ daily_calories = models.FloatField(null=True, blank=True)
 
  def __str__(self):
     return f"{self.user.username} Profile"
 
 class Diet(models.Model):
  name = models.CharField(max_length=100)
- image = models.ImageField(upload_to='media/', blank=True, null=True)
+ image = models.ImageField(upload_to='', blank=True, null=True)
  description = models.TextField()
 
  def __str__(self):

@@ -1,0 +1,116 @@
+.calorie-counter {
+    width: 418px;
+    height: 517px;
+    &__title {
+        display: box;
+        width: 338px;
+        text-transform: uppercase;
+        font-size: 48px;
+        font-weight: 600;
+        color: #476334;
+    }
+    &__form {
+        margin-top: 64px;
+        width: 550px;
+        height: 239px;
+    }
+    .gender {
+        width: 174px;
+        background-color: #fffaee;
+        color: #476334;
+        border-radius: 5px;
+        font-size: 24px;
+        border: none;
+    }
+    .age {
+        width: 90px;
+        height: 33px;
+        background-color: #fffaee;
+        color: #476334;
+        border-radius: 5px;
+        font-size: 24px;
+        border: none;
+    }
+    .weight {
+        width: 104px;
+        height: 33px;
+        background-color: #fffaee;
+        color: #476334;
+        border-radius: 5px;
+        font-size: 24px;
+        border: none;
+    }
+    .height {
+        width: 104px;
+        height: 33px;
+        background-color: #fffaee;
+        color: #476334;
+        border-radius: 5px;
+        font-size: 24px;
+        border: none;
+    }
+    .goal {
+        width: 289px;
+        height: 53px;
+        background-color: #fffaee;
+        color: #476334;
+        border-radius: 5px;
+        font-size: 24px;
+        border: none;
+    }
+    .activityLevel {
+        width: 290px;
+        height: 53px;
+        background-color: #fffaee;
+        color: #476334;
+        border-radius: 5px;
+        font-size: 24px;
+        border: none;
+    }
+    .inp {
+        margin-right: 24px;
+        margin-bottom: 30px;
+        border-radius: 15px;
+        padding: 9px 20px;
+        appearance: none;
+    }
+}
+
+.select-tag {
+    padding: 12px 20px;
+    height: 53px;
+}
+
+.submit-btn {
+    width: 236px;
+    height: 63px;
+    background-color: #64894b;
+    border-radius: 20px;
+    color: white;
+    font-size: 32px;
+    font-weight: 500;
+    border: none;
+    margin-top: 42px;
+}
+
+.submit-btn:hover {
+    background-color: darkgreen;
+}
+
+.calorie-result {
+    margin-top: 64px;
+    &__paragraph {
+        display: box;
+        font-size: 32px;
+        color: #476334;
+        width: 418px;
+    }
+    &__amount {
+        margin-top: 42px;
+        color: #476334;
+        font-size: 48px;
+        span {
+            font-weight: 800;
+        }
+    }
+}

@@ -7,6 +7,7 @@ const Diets = () => {
     fetch("http://localhost:8000/api/diet/")
       .then((res) => res.json())
       .then((data) => setDiets(data))
+      
       .catch((err) => console.error("Failed to fetch diets:", err));
   }, []);
 
@@ -18,7 +19,8 @@ const Diets = () => {
           <li key={diet.id}>
             <h3>{diet.name}</h3>
             <p>{diet.description}</p>
-            {diet.image && <img src={diet.image} alt={diet.name} width="200" />}
+            <img alt="" />
+            {diet.image && <img src={`http://localhost:8000${diet.image}`} alt={diet.name} width="200" />}
           </li>
         ))}
       </ul>
