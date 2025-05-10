@@ -5,6 +5,7 @@ import Diets from "../pages/Diets";
 import Navigation from "../common/Navigation/Navigation";
 
 import "./app.scss";
+import Footer from "../common/Footer/Footer";
 
 const App = () => {
   return (
@@ -18,6 +19,8 @@ const App = () => {
           {/* <Route path="/exercises" element={<Diets />} /> */}
           {/* <Route path="/login" element={<Diets />} /> */}
         </Routes>
+
+        <Footer />
       </div>
     </BrowserRouter>
   );
