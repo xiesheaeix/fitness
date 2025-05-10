@@ -1,3 +1,6 @@
+brew install postgresql
+brew services start postgresql
+
 Create db fitnessApp
 python manage.py shell
 
