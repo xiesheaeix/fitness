@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import "./dietsPage.scss";
 import DietList from "../dietList/DietList";
 
-const DietsPage = () => {
+const DietsPage = ({setChoosedDiet}) => {
 
 
   const [diets, setDiets] = useState([]);
@@ -26,7 +26,7 @@ const DietsPage = () => {
         // onInput={(e) => setSearchingDiet(e.target.value)}
       />
 
-      <DietList diets={diets} />
+      <DietList diets={diets} setChoosedDiet={setChoosedDiet}/>
     </section>
   );
 };
