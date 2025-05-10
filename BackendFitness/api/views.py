@@ -1,11 +1,18 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .models import Diet
-from .serializers import DietSerializer, ChangePasswordSerializer, RegisterSerializer
+
+from .models import Diet, Exercise, UserExerciseRelation
+from .serializers import DietSerializer, ExerciseSerializer, UserExerciseRelationSerializer, ChangePasswordSerializer, RegisterSerializer
 from rest_framework import status, permissions
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.mixins import UpdateModelMixin   
+from rest_framework.permissions  import IsAuthenticated   
+
+
 from django.contrib.auth.tokens import default_token_generator
+
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
@@ -31,6 +38,23 @@ def diet_list(request):
     serializer = DietSerializer(diets, many=True)
     return Response(serializer.data)
 
+
+
+class ExerciseViewSet(ModelViewSet):
+    queryset = Exercise.objects.all()
+    serializer_class = ExerciseSerializer
+    
+    
+class UserExerciseRelationship(UpdateModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = UserExerciseRelation.objects.all()
+    serializer_class = UserExerciseRelationSerializer
+    lookup_field = 'exercise'
+    
+    def get_object(self):
+        obj,_ = UserExerciseRelationship.objects.get_or_create(user=self.request.user, exercise_id=self.kwargs['exercise'])
+        return obj
+        
 
 
 
@@ -99,36 +123,30 @@ class PasswordResetConfirmView(APIView):
 @api_view(['POST', 'GET'])  # Changed to POST since you're using request.data
 def ask_api(request):
     try:
-        diet_name = request.data.get('diet_name')
-        if not diet_name:
-            return Response({"error": "Diet name is required."}, status=400)
-        
-        diet = Diet.objects.filter(name=diet_name).first()
-        if not diet:
-            return Response({"error": "Diet not found."}, status=404)
-        
-        # Initialize diet_descriptions
+        diets = Diet.objects.all()
+
+        # Accumulate all diet descriptions
         diet_descriptions = ""
-        
-        image_url = request.build_absolute_uri(diet.image.url) if diet.image else "No image"
-        diet_descriptions += (
-            f"\n- Name: {diet.name}\n"
-            f"  Description: {diet.description}\n"
-            f"  Image: {image_url}\n"
-        )
+        for diet in diets:
+            image_url = request.build_absolute_uri(diet.image.url) if diet.image else "No image"
+            diet_descriptions += (
+                f"\n- Name: {diet.name}\n"
+                f"  Description: {diet.description}\n"
+                f"  Image: {image_url}\n"
+            )
 
         # Construct the prompt
         prompt = (
-           "Using the following diet, generate a structured JSON object. "
-            "The object should include:\n"
+            "Using the following list of diets, generate a structured JSON array. "
+            "Each object in the array should include:\n"
             "- 'name': the name of the diet\n"
             "- 'summary': a short description of the diet\n"
             "- 'recipes': a list of recipe objects for that diet. Each recipe object must include:\n"
             "    - 'title': name of the recipe\n"
             "    - 'instructions': preparation steps\n"
             "    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
-            f"Diet:\n{diet_descriptions}\n"
-            "Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown."
+            f"Diets:\n{diet_descriptions}\n"
+            "Respond ONLY with a raw JSON array. Do not include any headings, explanations, or markdown."
         )
 
               # Ensure the prompt is not empty
@@ -148,8 +166,10 @@ def ask_api(request):
 
         return Response(parsed_json)
 
+
+        # return Response({"result": response.text})
     except Exception as e:
-        traceback.print_exc()  
+        traceback.print_exc()  # 🔥 Prints full stack trace in the console
         return Response({"error": str(e)}, status=500)
     
 @api_view(['GET'])
