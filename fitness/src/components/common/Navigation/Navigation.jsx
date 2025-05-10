@@ -20,7 +20,7 @@ const Navigation = () => {
           </li>
 
           <li className="navigation-list__item">
-            <Link to="/exercises">LOGIN</Link>
+            <Link to="/signup">SIGN UP</Link>
           </li>
         </ul>
       </nav>
