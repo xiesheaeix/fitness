@@ -1,7 +1,54 @@
 .main {
+    display: flex;
+    align-items: center;
     background-color: #b0c485;
     height: 704px;
-    width: 100%;
+    // width: 100%
     margin-top: 205px;
-    padding: 93px 70px 90px 205px;
+    padding: 93px 70px 0px 205px;
+    &-img {
+        width: 705px;
+        height: 506px;
+        margin-left: 195px;
+    }
+}
+
+.basal-metabolism {
+    padding-bottom: 200px;
+    &__title {
+        color: #476334;
+        font-weight: 700;
+        font-size: 50px;
+        margin-top: 150px;
+        text-align: center;
+    }
+    &__paragraph {
+        display: block;
+        width: 600px;
+        margin: 0 auto;
+        text-align: center;
+        font-size: 32px;
+        font-weight: 500;
+        margin-top: 64px;
+    }
+}
+
+.about {
+    display: flex;
+    margin: 0 auto;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 200px;
+    width: 1452px;
+    &-img {
+        width: 705px;
+        height: 506px;
+    }
+    &-paragraph {
+        font-size: 32px;
+        color: black;
+        display: block;
+        width: 600px;
+        text-align: center;
+    }
 }
