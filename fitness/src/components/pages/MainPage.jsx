@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 
-const MainPage = () => {
+import "./mainPage.scss";
 
-  return <h1>MainPage</h1>;
+const MainPage = () => {
+  return <main className="main"></main>;
 };
 
 export default MainPage;
