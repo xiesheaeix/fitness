@@ -1,9 +1,10 @@
 # api/urls.py
 from django.urls import path
-from .views import hello_world,  diet_list, ask_api  # Import the new view
+from .views import hello_world,  diet_list, ask_api , profile
 
 urlpatterns = [
     path('hello/', hello_world),
     path('diet/', diet_list),
-    path('ask_api/', ask_api),  # Added this line to include the ask_api endpoint
+    path('ask_api/', ask_api), 
+    path('profile/', profile),
 ]

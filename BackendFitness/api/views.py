@@ -75,3 +75,26 @@ def ask_api(request):
     except Exception as e:
         traceback.print_exc()  # 🔥 Prints full stack trace in the console
         return Response({"error": str(e)}, status=500)
+    
+@api_view(['GET'])
+def profile(request):
+    try:
+        # Assuming you have a user profile model
+        user = request.user
+        if not user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=401)
+
+        # Fetch the user's profile data
+        profile_data = {
+            "username": user.username,
+            "avatar": user.profile.avatar if hasattr(user, 'profile') else None,
+            "age": user.profile.age if hasattr(user, 'profile') else None,
+            "height": user.profile.height if hasattr(user, 'profile') else None,
+            "weight": user.profile.weight if hasattr(user, 'profile') else None,
+            "daily_calories": user.profile.daily_calories if hasattr(user, 'profile') else None,
+        }
+
+        return Response(profile_data)
+    except Exception as e:
+        traceback.print_exc()
+        return Response({"error": str(e)}, status=500)

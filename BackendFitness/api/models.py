@@ -8,6 +8,7 @@ class Profile(models.Model):
  age = models.IntegerField(null=True, blank=True)
  height = models.FloatField(null=True, blank=True)
  weight = models.FloatField(null=True, blank=True)
+ daily_calories = models.FloatField(null=True, blank=True)
 
  def __str__(self):
     return f"{self.user.username} Profile"
