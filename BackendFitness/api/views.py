@@ -122,6 +122,8 @@ class PasswordResetConfirmView(APIView):
           
 @api_view(['POST', 'GET'])  # Changed to POST since you're using request.data
 def ask_api(request):
+    print("Parsed data:", request.data)  # Add this
+
     try:
         diets = Diet.objects.all()
 

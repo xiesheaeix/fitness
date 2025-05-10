@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import MainPage from "../pages/MainPage";
-import Diets from "../pages/Diets";
+
 import Navigation from "../common/Navigation/Navigation";
 
 import "./app.scss";
@@ -9,6 +9,7 @@ import Footer from "../common/Footer/Footer";
 
 import LoginPage from "../pages/loginPage/LoginPage";
 import SignUpPage from "../pages/signUpPage/SignUpPage";
+import DietsPage from "../pages/DietsPage";
 
 const App = () => {
   return (
@@ -17,7 +18,7 @@ const App = () => {
         <Navigation />
         <Routes>
           <Route path="/" element={<MainPage />} />
-          <Route path="/diets" element={<Diets />} />
+          <Route path="/diets" element={<DietsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           {/* <Route path="/exercises" element={<Diets />} /> */}
