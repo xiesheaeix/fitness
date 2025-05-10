@@ -166,53 +166,41 @@ class PasswordResetConfirmView(APIView):
         except Exception:
             return Response({'detail': 'Invalid link.'}, status=400)
           
-@api_view(['POST', 'GET'])  # Changed to POST since you're using request.data
+@api_view(['POST'])  # Changed to POST since you're using request.data
 def ask_api(request):
     try:
-        diets = Diet.objects.all()
-
-        # Accumulate all diet descriptions
-        diet_descriptions = ""
-        for diet in diets:
-            image_url = request.build_absolute_uri(diet.image.url) if diet.image else "No image"
-            diet_descriptions += (
-                f"\n- Name: {diet.name}\n"
-                f"  Description: {diet.description}\n"
-                f"  Image: {image_url}\n"
-            )
+        # Parse the diet data from the request
         diet_data = request.data.get('diet')
         if not diet_data:
             return Response({"error": "Diet data is required."}, status=400)
-        
+
+        # Extract diet details
         name = diet_data.get("name", "")
         description = diet_data.get("description", "")
         image_url = request.build_absolute_uri(diet_data.get("image", ""))
 
-
-        # Construct the prompt
+        # Construct the prompt for the generative model
         prompt = (
-            "Using the following list of diets, generate a structured JSON array. "
-            "Each object in the array should include:\n"
-            "- 'name': the name of the diet\n"
-            "- 'summary': a short description of the diet\n"
-            "- 'recipes': a list of recipe objects for that diet. Each recipe object must include:\n"
-            "    - 'title': name of the recipe\n"
-            "    - 'instructions': preparation steps\n"
-            "    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
-
-            f"Diets:\n{diet_descriptions}\n"
-            "Respond ONLY with a raw JSON array. Do not include any headings, explanations, or markdown."
-
-            "Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown. Have at least 5 recipes.\n"
-
+            f"Using the following diet information, generate a structured JSON object. "
+            f"The object should include:\n"
+            f"- 'name': the name of the diet\n"
+            f"- 'summary': a short description of the diet\n"
+            f"- 'recipes': a list of recipe objects for that diet. Each recipe object must include:\n"
+            f"    - 'title': name of the recipe\n"
+            f"    - 'instructions': preparation steps\n"
+            f"    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
+            f"Diet:\n"
+            f"- Name: {name}\n"
+            f"- Description: {description}\n"
+            f"- Image: {image_url}\n"
+            f"Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown."
         )
 
-        # Generate content using the model
+        # Generate content using the generative model
         model = genai.GenerativeModel("gemini-2.0-flash")
         response = model.generate_content(prompt)
 
-
-         # Strip markdown formatting like ```json ... ```
+        # Strip markdown formatting like ```json ... ```
         cleaned = re.sub(r"^```json|```$", "", response.text.strip(), flags=re.MULTILINE).strip()
 
         # Parse the cleaned JSON string
@@ -220,10 +208,8 @@ def ask_api(request):
 
         return Response(parsed_json)
 
-
-        # return Response({"result": response.text})
     except Exception as e:
-        traceback.print_exc()  # 🔥 Prints full stack trace in the console
+        traceback.print_exc()  # Print the full stack trace for debugging
         return Response({"error": str(e)}, status=500)
     
 @api_view(['GET'])
