@@ -1,7 +1,6 @@
- import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const Diets = () => {
- 
   const [diets, setDiets] = useState([]);
 
   useEffect(() => {
@@ -26,6 +25,5 @@ const Diets = () => {
     </div>
   );
 };
-
 
 export default Diets;

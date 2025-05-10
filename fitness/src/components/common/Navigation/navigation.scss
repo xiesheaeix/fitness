@@ -1,4 +1,9 @@
 .navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 122px;
     &__logo {
         width: 36px;
         height: 36px;
@@ -6,9 +11,18 @@
         background-color: red;
     }
     &-list {
+        display: flex;
+        justify-content: space-between;
+        width: 649px;
         list-style-type: none;
-        &__item {
-            font-size: 50px;
+        a {
+            text-decoration: none;
+            color: #64894b;
+            font-size: 32px;
         }
     }
+}
+
+a {
+    text-decoration: none;
 }
