@@ -14,7 +14,7 @@ class Profile(models.Model):
 
 class Diet(models.Model):
  name = models.CharField(max_length=100)
- image = models.ImageField(upload_to='media/', blank=True, null=True)
+ image = models.ImageField(upload_to='', blank=True, null=True)
  description = models.TextField()
 
  def __str__(self):
