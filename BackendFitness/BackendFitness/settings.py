@@ -85,8 +85,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fitnessApp',
-        'USER': 'admin',
-        'PASSWORD': 'secret',
+        'USER': 'sheaehrenberger',
+        'PASSWORD': 'Kadence1',
         'HOST': 'localhost',
         'PORT': '5432',
     }

@@ -99,30 +99,36 @@ class PasswordResetConfirmView(APIView):
 @api_view(['POST', 'GET'])  # Changed to POST since you're using request.data
 def ask_api(request):
     try:
-        diets = Diet.objects.all()
-
-        # Accumulate all diet descriptions
+        diet_name = request.data.get('diet_name')
+        if not diet_name:
+            return Response({"error": "Diet name is required."}, status=400)
+        
+        diet = Diet.objects.filter(name=diet_name).first()
+        if not diet:
+            return Response({"error": "Diet not found."}, status=404)
+        
+        # Initialize diet_descriptions
         diet_descriptions = ""
-        for diet in diets:
-            image_url = request.build_absolute_uri(diet.image.url) if diet.image else "No image"
-            diet_descriptions += (
-                f"\n- Name: {diet.name}\n"
-                f"  Description: {diet.description}\n"
-                f"  Image: {image_url}\n"
-            )
+        
+        image_url = request.build_absolute_uri(diet.image.url) if diet.image else "No image"
+        diet_descriptions += (
+            f"\n- Name: {diet.name}\n"
+            f"  Description: {diet.description}\n"
+            f"  Image: {image_url}\n"
+        )
 
         # Construct the prompt
         prompt = (
-            "Using the following list of diets, generate a structured JSON array. "
-            "Each object in the array should include:\n"
+           "Using the following diet, generate a structured JSON object. "
+            "The object should include:\n"
             "- 'name': the name of the diet\n"
             "- 'summary': a short description of the diet\n"
             "- 'recipes': a list of recipe objects for that diet. Each recipe object must include:\n"
             "    - 'title': name of the recipe\n"
             "    - 'instructions': preparation steps\n"
             "    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
-            f"Diets:\n{diet_descriptions}\n"
-            "Respond ONLY with a raw JSON array. Do not include any headings, explanations, or markdown."
+            f"Diet:\n{diet_descriptions}\n"
+            "Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown."
         )
 
               # Ensure the prompt is not empty
@@ -142,10 +148,8 @@ def ask_api(request):
 
         return Response(parsed_json)
 
-
-        # return Response({"result": response.text})
     except Exception as e:
-        traceback.print_exc()  # 🔥 Prints full stack trace in the console
+        traceback.print_exc()  
         return Response({"error": str(e)}, status=500)
     
 @api_view(['GET'])
