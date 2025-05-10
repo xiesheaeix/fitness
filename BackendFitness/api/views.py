@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from .models import Diet, Exercise, UserExerciseRelation
-from .serializers import DietSerializer, ExerciseSerializer, UserExerciseRelationSerializer, ChangePasswordSerializer, RegisterSerializer
+from .serializers import DietSerializer, ExerciseSerializer, UserExerciseRelationSerializer,CalorieSaveUserSerializer, ChangePasswordSerializer, RegisterSerializer
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -26,6 +26,17 @@ from django.http import JsonResponse
 #gemini 
 import google.generativeai as genai
 genai.configure(api_key="AIzaSyB1C2lqJfUEpIMoDHUNMV3Cz2F5sLwTm7I")
+
+# views.py
+
+class CalorieEntryView(APIView):
+    def post(self, request):
+        serializer = CalorieSaveUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Data saved successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 @api_view(['GET'])

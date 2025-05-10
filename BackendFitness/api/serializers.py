@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from .models import Diet, Exercise, UserExerciseRelation
+from .models import Diet, Exercise, UserExerciseRelation, Profile
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
@@ -12,6 +12,10 @@ class DietSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CalorieEntrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
 
 
 class RegisterSerializer(serializers.ModelSerializer):
