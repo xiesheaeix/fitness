@@ -45,11 +45,11 @@
     .login-controls {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         width: 280px;
-        margin-top: 42px;
+        margin: 42px auto 0;
         .sign-up__action {
-            width: 194px;
-            height: 63px;
+            width: 100px;
             color: #476334;
             background: none;
             border: none;
@@ -59,7 +59,7 @@
             }
         }
         .log-in__action {
-            width: 194px;
+            width: 160px;
             height: 63px;
             background-color: #64894b;
             color: white;

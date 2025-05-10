@@ -6,8 +6,9 @@ import Navigation from "../common/Navigation/Navigation";
 
 import "./app.scss";
 import Footer from "../common/Footer/Footer";
-import SignUpPage from "../pages/loginPage/LoginPage";
+
 import LoginPage from "../pages/loginPage/LoginPage";
+import SignUpPage from "../pages/signUpPage/SignUpPage";
 
 const App = () => {
   return (
@@ -17,7 +18,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/diets" element={<Diets />} />
-          <Route path="/signup" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
           {/* <Route path="/exercises" element={<Diets />} /> */}
           {/* <Route path="/login" element={<Diets />} /> */}
         </Routes>
