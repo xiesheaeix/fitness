@@ -24,3 +24,15 @@
 a {
     text-decoration: none;
 }
+
+.nav-link {
+    text-decoration: none;
+    color: black;
+    padding: 10px;
+}
+
+.nav-link.active {
+    color: green;
+    font-weight: bold;
+    border-bottom: 2px solid green;
+}
