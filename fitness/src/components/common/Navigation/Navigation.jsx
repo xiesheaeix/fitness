@@ -4,7 +4,6 @@ import logo from "../../../assets/logo.svg";
 
 const Navigation = () => {
   return (
-    <div className="container">
       <nav className="navigation">
         <img src={logo} alt="logo" className="navigation__logo" />
 
@@ -63,7 +62,7 @@ const Navigation = () => {
           </li>
         </ul>
       </nav>
-    </div>
+   
   );
 };
 

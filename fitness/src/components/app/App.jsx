@@ -18,7 +18,7 @@ const App = () => {
   const [choosedDiet, setChoosedDiet] = useState({})
   return (
     <BrowserRouter>
-      <div className="app">
+      <div className="app" style={{ backgroundColor: "#f9f5e8" }}>
         <Navigation />
         <Routes>
           <Route path="/" element={<MainPage />} />
