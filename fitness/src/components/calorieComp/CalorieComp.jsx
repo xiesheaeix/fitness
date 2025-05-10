@@ -8,6 +8,7 @@ const CalorieComp = () => {
   const [weight, setWeight] = useState("");
   const [activityLevel, setActivityLevel] = useState("");
   const [caloriePerDayAmount, setCaloriePerDayAmount] = useState(null);
+  
   const calculateDayCalorie = () => {
     const genderMultiplier =
       gender === "male" ? 5 : gender === "female" ? -161 : -161;

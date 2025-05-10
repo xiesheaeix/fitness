@@ -187,7 +187,8 @@ def ask_api(request):
             f"- 'summary': a short description of the diet\n"
             f"- 'recipes': a list of recipe objects for that diet. Each recipe object must include:\n"
             f"    - 'title': name of the recipe\n"
-            f"    - 'instructions': preparation steps\n"
+            f"    - 'ingredients': a list of ingredients, with each ingredient as a string\n"
+            f"    - 'instructions': a list of preparation steps, with each step as a string\n"
             f"    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
             f"Diet:\n"
             f"- Name: {name}\n"
@@ -195,6 +196,7 @@ def ask_api(request):
             f"- Image: {image_url}\n"
             f"Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown."
         )
+
 
         # Generate content using the generative model
         model = genai.GenerativeModel("gemini-2.0-flash")

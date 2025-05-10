@@ -1,0 +1,53 @@
+.dish-card {
+  background: #fff;
+  position: relative;
+  z-index: 9999;
+  
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: auto;
+  transition: transform 0.2s ease;
+  margin-bottom: 50px;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .dish-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    text-align: center;
+  }
+
+  .section {
+    margin-bottom: 1.25rem;
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+      color: #34495e;
+    }
+  }
+
+  .ingredient-list {
+    list-style: disc inside;
+    padding-left: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 0.4rem;
+      color: #555;
+    }
+  }
+
+  .nutrition-facts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: #444;
+  }
+}
