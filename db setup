@@ -1,0 +1,12 @@
+Create db fitnessApp
+python manage.py shell
+
+from api.models import Diet
+
+Diet.objects.create(name='Vegan Diet', image='media/vegan.jpg', description='A diet that excludes all animal products and focuses on plant-based foods.')
+Diet.objects.create(name='Intermittent Fasting', description='Cycles between periods of eating and fasting, often used for weight loss and metabolic health.')
+Diet.objects.create(name='Low FODMAP Diet', description='Designed to reduce digestive symptoms by eliminating fermentable carbs.')
+Diet.objects.create(name='High-Protein Diet', image='media/high_protein.jpg', description='Emphasizes protein intake to support muscle growth and repair.')
+
+exit()
+
