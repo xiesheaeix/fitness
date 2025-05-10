@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import MainPage from "../pages/MainPage";
 
@@ -13,9 +13,14 @@ import SignUpPage from "../pages/signUpPage/SignUpPage";
 import DietsPage from "../pages/DietsPage";
 import SingleDietPage from "../pages/singleDietPage/SingleDietPage";
 import { useState } from "react";
+import ExercisesPage from "../pages/exercisesPage/ExercisesPage";
 
 const App = () => {
-  const [choosedDiet, setChoosedDiet] = useState({})
+  const [choosedDiet, setChoosedDiet] = useState({});
+  const [userLoggedIn, setUserLoggedIn] = useState(() => {
+    return !!localStorage.getItem('authToken');
+  }); //if user is loggged in or not
+
   return (
     <BrowserRouter>
       <div className="app" style={{ backgroundColor: "#f9f5e8" }}>
@@ -25,12 +30,11 @@ const App = () => {
           <Route path="/diets" element={<DietsPage setChoosedDiet={setChoosedDiet}/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-
+          <Route path="/profile" element={userLoggedIn ? <ProfilePage /> : <Navigate to="/login" />} />
+          <Route path="/exercises" element={<ExercisesPage />} />
 
           <Route path="/diets/:nameTag" element={<SingleDietPage choosedDiet={choosedDiet}/>}/>
-          {/* <Route path="/exercises" element={<Diets />} /> */}
-          {/* <Route path="/login" element={<Diets />} /> */}
+          
         </Routes>
 
         <Footer />

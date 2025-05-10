@@ -3,6 +3,9 @@ import "./navigation.scss";
 import logo from "../../../assets/logo.svg";
 
 const Navigation = () => {
+
+
+
   return (
       <nav className="navigation">
         <img src={logo} alt="logo" className="navigation__logo" />

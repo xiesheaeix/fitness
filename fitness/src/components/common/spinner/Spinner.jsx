@@ -4,7 +4,8 @@ const Spinner = () => {
 
 
     return (
-        <img src={gif} alt="spinner" />
+        <div className="spinner">
+        </div>
     )
 }
 

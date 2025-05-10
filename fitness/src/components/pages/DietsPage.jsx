@@ -18,15 +18,11 @@ const DietsPage = ({setChoosedDiet}) => {
 
   return (
     <section className="diets">
-      <h1 className="diets-title">Diets</h1>
+      <div className="container">
+        <h1 className="diets-title">Diets</h1>
 
-      <input
-        type="text"
-        className="diets-search"
-        // onInput={(e) => setSearchingDiet(e.target.value)}
-      />
-
-      <DietList diets={diets} setChoosedDiet={setChoosedDiet}/>
+        <DietList diets={diets} setChoosedDiet={setChoosedDiet}/>
+      </div>
     </section>
   );
 };
