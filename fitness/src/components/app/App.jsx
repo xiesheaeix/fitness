@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainPage from "../pages/MainPage";
 
 import Navigation from "../common/Navigation/Navigation";
+import ProfilePage from "../pages/profPage";
 
 import "./app.scss";
 import Footer from "../common/Footer/Footer";
@@ -24,6 +25,9 @@ const App = () => {
           <Route path="/diets" element={<DietsPage setChoosedDiet={setChoosedDiet}/>} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+
+
           <Route path="/diets/:nameTag" element={<SingleDietPage choosedDiet={choosedDiet}/>}/>
           {/* <Route path="/exercises" element={<Diets />} /> */}
           {/* <Route path="/login" element={<Diets />} /> */}

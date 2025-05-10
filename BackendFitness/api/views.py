@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from rest_framework.decorators import api_view, permission_classes
 from .models import Diet, Exercise, UserExerciseRelation
 from .serializers import DietSerializer, ExerciseSerializer, UserExerciseRelationSerializer, ChangePasswordSerializer, RegisterSerializer
 from rest_framework import status, permissions
@@ -9,6 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.mixins import UpdateModelMixin   
 from rest_framework.permissions  import IsAuthenticated   
+from django.contrib.auth import authenticate
+
 
 
 from django.contrib.auth.tokens import default_token_generator
@@ -17,6 +19,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 
 from .serializers import DietSerializer
@@ -67,6 +71,48 @@ def register(request):
             return Response({"message": "User created successfully!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+
+
+from django.contrib.auth import authenticate
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
+
+@api_view(['POST'])
+def login(request):
+    # Получаем логин и пароль из запроса
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    # Аутентификация пользователя
+    user = authenticate(username=username, password=password)
+    
+    if user is not None:
+        # Если пользователь найден, создаем refresh и access токены
+        refresh = RefreshToken.for_user(user)
+        
+        # Создаем ответ с access токеном
+        response = Response({
+            "access": str(refresh.access_token)
+        })
+
+        # Устанавливаем refresh токен в HttpOnly cookie
+        response.set_cookie(
+            'refresh_token',        # Имя cookie
+            str(refresh),           # Значение refresh токена
+            httponly=True,          # Cookie доступна только через HTTP
+            secure=True,            # Cookie доступна только по HTTPS
+            samesite='Strict',      # Политика с SameSite для безопасности
+            max_age=86400           # Время жизни cookie
+        )
+
+        return response
+    else:
+        # Если аутентификация не удалась, возвращаем ошибку
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class ChangePasswordView(APIView):
@@ -167,25 +213,21 @@ def ask_api(request):
         return Response({"error": str(e)}, status=500)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def profile(request):
     try:
-        # Assuming you have a user profile model
         user = request.user
-        if not user.is_authenticated:
-            return Response({"error": "User not authenticated"}, status=401)
 
-        # Fetch the user's profile data
         profile_data = {
             "username": user.username,
-            "avatar": user.profile.avatar if hasattr(user, 'profile') else None,
-            "age": user.profile.age if hasattr(user, 'profile') else None,
-            "height": user.profile.height if hasattr(user, 'profile') else None,
-            "weight": user.profile.weight if hasattr(user, 'profile') else None,
-            "daily_calories": user.profile.daily_calories if hasattr(user, 'profile') else None,
+            "avatar": getattr(user.profile, 'avatar', None),
+            "age": getattr(user.profile, 'age', None),
+            "height": getattr(user.profile, 'height', None),
+            "weight": getattr(user.profile, 'weight', None),
+            "daily_calories": getattr(user.profile, 'daily_calories', None),
         }
 
         return Response(profile_data)
     except Exception as e:
         traceback.print_exc()
         return Response({"error": str(e)}, status=500)
-
