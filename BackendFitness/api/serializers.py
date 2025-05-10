@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Diet
+from rest_framework.serializers import ModelSerializer
+
+from .models import Diet, Exercise, UserExerciseRelation
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
@@ -56,6 +58,37 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.set_password(self.validated_data['new_password'])
         user.save()
         return user
+    
+
+# class BookReaderSerializer(ModelSerializer):
+
+#     class Meta:
+#         model = User
+#         fields = ('first_name', 'last_name')
+
+
+class ExerciseSerializer(ModelSerializer):
+    # # likes_count = serializers.SerializerMethodField()
+    # annotated_likes = serializers.IntegerField(read_only=True)
+    # rating = serializers.DecimalField(
+    #     max_digits=3, decimal_places=2, read_only=True)
+    # owner_name = serializers.CharField(
+    #     source='owner.username', default='', read_only=True)
+    # readers = BookReaderSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Exercise
+        fields = "__all__"
+
+    # def get_likes_count(self, instance):
+    #     return UserBookRelation.objects.filter(book=instance, like=True).count()
+
+
+class UserExerciseRelationSerializer(ModelSerializer):
+    class Meta:
+        model = UserExerciseRelation
+        fields = ('exercise', 'like', 'rate')
+
 
 
 

@@ -22,6 +22,42 @@ class Diet(models.Model):
     return self.name
 
 
+
+
+class Exercise(models.Model):
+    name = models.CharField(max_length=250)
+    duration = models.IntegerField()
+    burn_calories = models.DecimalField(max_digits=7, decimal_places=2)
+    sportsman = models.ManyToManyField(User, through='UserExerciseRelation',
+                                     related_name='exercise')
+    
+    
+
+    def __str__(self):
+        return f'{self.name}'
+
+
+class UserExerciseRelation(models.Model):
+
+    
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, null=True)
+    like = models.BooleanField(default=False)
+    in_exercisemarks = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f' {self.user.username} exercise: {self.exercise},'
+
+    # def save(self, *args, **kwargs):
+    #     from store.logic import set_rating
+    #     old_rate = self.rate
+    #     creating = not self.pk
+    #     super().save(*args, **kwargs)
+    #     new_rate = self.rate
+    #     if old_rate != new_rate or creating:
+    #         set_rating(self.book)
+
 # class Exercise(models.Model):
 #  user = models.ForeignKey(User, on_delete=models.CASCADE)
 #  name = models.CharField(max_length=100)
