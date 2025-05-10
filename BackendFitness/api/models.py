@@ -15,6 +15,7 @@ class Profile(models.Model):
 
 class Diet(models.Model):
  name = models.CharField(max_length=100)
+ nameTag = models.CharField(max_length=100, default='default_tag')
  image = models.ImageField(upload_to='', blank=True, null=True)
  description = models.TextField()
 
@@ -22,25 +23,19 @@ class Diet(models.Model):
     return self.name
 
 
-
-
 class Exercise(models.Model):
     name = models.CharField(max_length=250)
     duration = models.IntegerField()
     burn_calories = models.DecimalField(max_digits=7, decimal_places=2)
+    image = models.ImageField(upload_to='', blank=True, null=True)
     sportsman = models.ManyToManyField(User, through='UserExerciseRelation',
                                      related_name='exercise')
-    
-    
 
     def __str__(self):
         return f'{self.name}'
 
 
 class UserExerciseRelation(models.Model):
-
-    
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, null=True)
     like = models.BooleanField(default=False)
