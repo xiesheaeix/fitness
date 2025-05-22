@@ -1,0 +1,45 @@
+.exercise-list {
+  padding: 2rem;
+    padding-left: 0;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.exercise-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(61, 199, 88, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-5px);
+  }
+
+  .exercise-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+
+  .exercise-details {
+    padding: 1rem;
+
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0.2rem 0;
+      color: #555;
+    }
+  }
+}

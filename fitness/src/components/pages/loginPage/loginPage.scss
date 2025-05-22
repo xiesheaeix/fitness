@@ -1,77 +1,38 @@
 .login {
-    margin: 0 auto;
-    margin-top: 100px;
-    margin-bottom: 200px;
-    &-wrapper {
-        width: 280px;
-        margin: 0 auto;
-    }
-    width: 500px;
-    height: 300px;
-    background-color: #b0c485;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 74vh;
+  background-color: #f9f5e8;
+
+  .login-wrapper {
+    padding: 40px;
+  }
+
+  .MuiPaper-root {
+    background-color: #a9c285 !important;
+    border-radius: 16px;
+    padding: 50px 70px;
+  }
+
+  .MuiFilledInput-root {
+    background-color: #eae9d1;
     border-radius: 20px;
-    padding: 58px 70px;
-    &-form {
-        display: flex;
-        width: 100%;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 110px;
-        .input-field {
-            background-color: FFFAEE;
-            height: 30px;
-            padding: 10px 20px;
-            color: #476334;
-            font-size: 20px;
-            font-weight: lighter;
-            border-radius: 20px;
-            border: none;
-        }
+    font-size: 14px;
+
+    input {
+      color: #5a814f;
     }
-    .forgot-password {
-        a {
-            color: #476334;
-            &:hover {
-                text-decoration: underline;
-                color: white;
-            }
-        }
-        width: 240px;
-        margin-top: 15px;
-        padding-left: 40px;
-        text-align: right;
-        font-size: 18px;
-    }
-    .login-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 280px;
-        margin: 42px auto 0;
-        .sign-up__action {
-            width: 100px;
-            color: #476334;
-            background: none;
-            border: none;
-            font-size: 22px;
-            &:hover {
-                color: white;
-            }
-        }
-        .log-in__action {
-            width: 160px;
-            height: 63px;
-            background-color: #64894b;
-            color: white;
-            padding: 14px 39px;
-            border: none;
-            border-radius: 40px;
-            font-weight: 500;
-            font-size: 20px;
-            &:hover {
-                background: #c6d6a3;
-                color: #64894b;
-            }
-        }
-    }
+  }
+
+  .MuiButton-contained {
+    background-color: #5a814f !important;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 10px 20px;
+  }
+
+  .MuiButton-text {
+    color: #2d4c2f !important;
+  }
 }

@@ -1,15 +1,11 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import AuthForm from "./AuthForm";
 import "./loginPage.scss";
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
+  const handleLogin = async ({ username, password }) => {
     const response = await fetch("http://localhost:8000/api/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -22,43 +18,36 @@ const LoginPage = () => {
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
       alert("Login successful!");
-      navigate("/"); // переход на главную страницу или другую
+      navigate("/");
     } else {
       alert("Login failed: " + JSON.stringify(data));
     }
   };
 
+  const handleSignup = async (formData) => {
+    const response = await fetch("http://localhost:8000/api/signup/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: formData.username,
+        password: formData.password,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Signup successful! You can now log in.");
+    } else {
+      alert("Signup failed: " + JSON.stringify(data));
+    }
+  };
+
   return (
     <div className="login">
-      <div className="login-wrapper">
-        <form onSubmit={handleLogin} className="login-form">
-          <input
-            type="text"
-            className="input-field"
-            placeholder="Login"
-            required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            className="input-field"
-            placeholder="Password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit" className="log-in__action">Log in</button>
-        </form>
-
-        <div className="forgot-password">
-          <a href="#">Forgot Password?</a>
-        </div>
-
-        <div className="login-controls">
-          <Link to="/signup" className="sign-up__action">Sign up</Link>
-        </div>
-      </div>
+        <AuthForm onLogin={handleLogin} onSignup={handleSignup} />
     </div>
   );
 };

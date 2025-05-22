@@ -1,3 +1,10 @@
 .diets {
-    margin-top: 250px;
+    margin-top: 150px;
+    margin-bottom: 150px;
+
+    &-title {
+        font-size: 50px;
+        color:#476334;
+        text-align: left;
+    }
 }

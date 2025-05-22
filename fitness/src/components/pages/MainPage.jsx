@@ -7,6 +7,7 @@ import calcImg from "../../assets/calorie-counting-ift-1920x1080.webp";
 import calcAboutImg from "../../assets/calories-about.png";
 
 const MainPage = () => {
+  
   return (
     <>
       <main className="main">
