@@ -1,7 +1,7 @@
 from django.shortcuts import render
-
+from rest_framework.decorators import api_view, permission_classes
 from .models import Diet, Exercise, UserExerciseRelation
-from .serializers import DietSerializer, ExerciseSerializer, UserExerciseRelationSerializer,CalorieSaveUserSerializer, ChangePasswordSerializer, RegisterSerializer
+from .serializers import DietSerializer, ExerciseSerializer, UserExerciseRelationSerializer,UserieEntrySerializer, ChangePasswordSerializer, RegisterSerializer
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
@@ -9,6 +9,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.mixins import UpdateModelMixin   
 from rest_framework.permissions  import IsAuthenticated   
+from django.contrib.auth import authenticate
+
 
 
 from django.contrib.auth.tokens import default_token_generator
@@ -17,6 +19,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 
 from .serializers import DietSerializer
@@ -29,13 +33,36 @@ genai.configure(api_key="AIzaSyB1C2lqJfUEpIMoDHUNMV3Cz2F5sLwTm7I")
 
 # views.py
 
-class CalorieEntryView(APIView):
-    def post(self, request):
-        serializer = CalorieSaveUserSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Data saved successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt  # Если вы не настроили CSRF
+def user_entry(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)  # Получаем данные из тела запроса
+            # Логика для обработки данных
+            gender = data['gender']
+            age = data['age']
+            height = data['height']
+            weight = data['weight']
+            goal = data['goal']
+            activity_level = data['activity_level']
+
+            # Пример расчета калорий
+            calorie_per_day = 2000  # Замените на ваш расчет
+
+            return JsonResponse({
+                "message": "Data received successfully",
+                "calories": calorie_per_day  # Отправляем ответ с калориями
+            }, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+    else:
+        return JsonResponse({"error": "Only POST requests are allowed"}, status=405)
+
 
 
 
@@ -78,6 +105,48 @@ def register(request):
             return Response({"message": "User created successfully!"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+
+
+from django.contrib.auth import authenticate
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework import status
+
+@api_view(['POST'])
+def login(request):
+    # Получаем логин и пароль из запроса
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    # Аутентификация пользователя
+    user = authenticate(username=username, password=password)
+    
+    if user is not None:
+        # Если пользователь найден, создаем refresh и access токены
+        refresh = RefreshToken.for_user(user)
+        
+        # Создаем ответ с access токеном
+        response = Response({
+            "access": str(refresh.access_token)
+        })
+
+        # Устанавливаем refresh токен в HttpOnly cookie
+        response.set_cookie(
+            'refresh_token',        # Имя cookie
+            str(refresh),           # Значение refresh токена
+            httponly=True,          # Cookie доступна только через HTTP
+            secure=True,            # Cookie доступна только по HTTPS
+            samesite='Strict',      # Политика с SameSite для безопасности
+            max_age=86400           # Время жизни cookie
+        )
+
+        return response
+    else:
+        # Если аутентификация не удалась, возвращаем ошибку
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class ChangePasswordView(APIView):
@@ -131,53 +200,43 @@ class PasswordResetConfirmView(APIView):
         except Exception:
             return Response({'detail': 'Invalid link.'}, status=400)
           
-@api_view(['POST', 'GET'])  # Changed to POST since you're using request.data
+@api_view(['POST'])  # Changed to POST since you're using request.data
 def ask_api(request):
     try:
-        diets = Diet.objects.all()
-
-        # Accumulate all diet descriptions
-        diet_descriptions = ""
-        for diet in diets:
-            image_url = request.build_absolute_uri(diet.image.url) if diet.image else "No image"
-            diet_descriptions += (
-                f"\n- Name: {diet.name}\n"
-                f"  Description: {diet.description}\n"
-                f"  Image: {image_url}\n"
-            )
+        # Parse the diet data from the request
         diet_data = request.data.get('diet')
         if not diet_data:
             return Response({"error": "Diet data is required."}, status=400)
-        
+
+        # Extract diet details
         name = diet_data.get("name", "")
         description = diet_data.get("description", "")
         image_url = request.build_absolute_uri(diet_data.get("image", ""))
 
-
-        # Construct the prompt
+        # Construct the prompt for the generative model
         prompt = (
-            "Using the following list of diets, generate a structured JSON array. "
-            "Each object in the array should include:\n"
-            "- 'name': the name of the diet\n"
-            "- 'summary': a short description of the diet\n"
-            "- 'recipes': a list of recipe objects for that diet. Each recipe object must include:\n"
-            "    - 'title': name of the recipe\n"
-            "    - 'instructions': preparation steps\n"
-            "    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
-
-            f"Diets:\n{diet_descriptions}\n"
-            "Respond ONLY with a raw JSON array. Do not include any headings, explanations, or markdown."
-
-            "Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown. Have at least 5 recipes.\n"
-
+            f"Using the following diet information, generate a structured JSON object. "
+            f"The object should include:\n"
+            f"- 'name': the name of the diet\n"
+            f"- 'summary': a short description of the diet\n"
+            f"- 'recipes': a list of recipe objects for that diet. Each recipe object must include:\n"
+            f"    - 'title': name of the recipe\n"
+            f"    - 'ingredients': a list of ingredients, with each ingredient as a string\n"
+            f"    - 'instructions': a list of preparation steps, with each step as a string\n"
+            f"    - 'nutrition': an object with keys: 'calories' (int), 'protein' (g), 'carbs' (g), 'fat' (g)\n\n"
+            f"Diet:\n"
+            f"- Name: {name}\n"
+            f"- Description: {description}\n"
+            f"- Image: {image_url}\n"
+            f"Respond ONLY with a raw JSON object. Do not include any headings, explanations, or markdown."
         )
 
-        # Generate content using the model
+
+        # Generate content using the generative model
         model = genai.GenerativeModel("gemini-2.0-flash")
         response = model.generate_content(prompt)
 
-
-         # Strip markdown formatting like ```json ... ```
+        # Strip markdown formatting like ```json ... ```
         cleaned = re.sub(r"^```json|```$", "", response.text.strip(), flags=re.MULTILINE).strip()
 
         # Parse the cleaned JSON string
@@ -185,32 +244,26 @@ def ask_api(request):
 
         return Response(parsed_json)
 
-
-        # return Response({"result": response.text})
     except Exception as e:
-        traceback.print_exc()  # 🔥 Prints full stack trace in the console
+        traceback.print_exc()  # Print the full stack trace for debugging
         return Response({"error": str(e)}, status=500)
     
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def profile(request):
     try:
-        # Assuming you have a user profile model
         user = request.user
-        if not user.is_authenticated:
-            return Response({"error": "User not authenticated"}, status=401)
 
-        # Fetch the user's profile data
         profile_data = {
             "username": user.username,
-            "avatar": user.profile.avatar if hasattr(user, 'profile') else None,
-            "age": user.profile.age if hasattr(user, 'profile') else None,
-            "height": user.profile.height if hasattr(user, 'profile') else None,
-            "weight": user.profile.weight if hasattr(user, 'profile') else None,
-            "daily_calories": user.profile.daily_calories if hasattr(user, 'profile') else None,
+            "avatar": getattr(user.profile, 'avatar', None),
+            "age": getattr(user.profile, 'age', None),
+            "height": getattr(user.profile, 'height', None),
+            "weight": getattr(user.profile, 'weight', None),
+            "daily_calories": getattr(user.profile, 'daily_calories', None),
         }
 
         return Response(profile_data)
     except Exception as e:
         traceback.print_exc()
         return Response({"error": str(e)}, status=500)
-

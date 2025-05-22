@@ -8,11 +8,12 @@ const CalorieComp = () => {
   const [weight, setWeight] = useState("");
   const [activityLevel, setActivityLevel] = useState("");
   const [caloriePerDayAmount, setCaloriePerDayAmount] = useState(null);
+  
   const calculateDayCalorie = () => {
     const genderMultiplier =
       gender === "male" ? 5 : gender === "female" ? -161 : -161;
     const BMR = 10 * weight + 6.25 * height - 5 * age + genderMultiplier;
-    const activityLvlMultilpier = {
+    const activityLvlMultiplier = {
       sedentary: 1.2,
       light: 1.375,
       moderate: 1.55,
@@ -26,17 +27,48 @@ const CalorieComp = () => {
       maintain: 0,
     };
 
-    setCaloriePerDayAmount(
-      (
-        BMR * activityLvlMultilpier[activityLevel] +
-        goalMultiplier[goal]
-      ).toFixed(0)
-    );
+    return (
+      BMR * activityLvlMultiplier[activityLevel] + goalMultiplier[goal]
+    ).toFixed(0);
   };
-  const sendRequest = (e) => {
+
+  const sendRequest = async (e) => {
     e.preventDefault();
-    console.log("Sent");
-    console.log(calculateDayCalorie());
+
+    // Вычисление калорий на день
+    const calorieAmount = calculateDayCalorie();
+
+    // Данные для отправки на сервер
+    const requestData = {
+      gender,
+      age: Number(age),
+      height: Number(height),
+      weight: Number(weight),
+      goal,
+      activity_level: activityLevel,
+      daily_calories: calorieAmount,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8000/api/user-entry/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      if (response.ok) {
+        console.log("Data sent successfully");
+        const responseData = await response.json();
+        console.log(responseData); // Обрабатываем данные с сервера, если нужно
+        setCaloriePerDayAmount(responseData.calories); // Если ответ сервера включает количество калорий
+      } else {
+        console.log("Failed to send data", response.status);
+      }
+    } catch (error) {
+      console.error("Error sending data:", error);
+    }
   };
 
   const showedComponent =

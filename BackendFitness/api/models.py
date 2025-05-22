@@ -1,20 +1,38 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Profile(models.Model):
- user = models.OneToOneField(User, on_delete=models.CASCADE)
- username = models.CharField(max_length=100, unique=True)
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('n/a', 'N/A'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    username = models.CharField(max_length=100, unique=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='n/a')
+    avatar = models.CharField(max_length=200, default='https://i.imgur.com/1t8xewY.png')
+    age = models.IntegerField(null=True, blank=True)
+    height = models.FloatField(null=True, blank=True)
+    weight = models.FloatField(null=True, blank=True)
+    daily_calories = models.FloatField(null=True, blank=True)
+    activity_level = models.CharField(max_length=50, null=True, blank=True)
+    goal = models.CharField(max_length=50, null=True, blank=True)
 
- avatar = models.CharField(max_length=200, default='https://i.imgur.com/1t8xewY.png')
- age = models.IntegerField(null=True, blank=True)
- height = models.FloatField(null=True, blank=True)
- weight = models.FloatField(null=True, blank=True)
- daily_calories = models.FloatField(null=True, blank=True)
+ 
+ 
 
 
 
- def __str__(self):
-    return f"{self.user.username} Profile"
+    def __str__(self):
+        return f"{self.user.username} Profile"
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance, username=instance.username)
 
 class Diet(models.Model):
  name = models.CharField(max_length=100)
